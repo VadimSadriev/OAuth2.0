@@ -5,6 +5,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using OAuth.Common.Database;
 using OAuth.Server.Data;
+using OAuth.Server.Extensions;
+using OAuth.Server.Middlewares;
+using System.Text.Json.Serialization;
 
 namespace OAuth.Server
 {
@@ -20,7 +23,10 @@ namespace OAuth.Server
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDb<DataContext>(Configuration.GetSection("Database"));
+            services.Addidentity();
+            services.AddApplication();
             services.AddControllersWithViews()
+                .AddJsonOptions(opts => opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()))
                 .AddRazorRuntimeCompilation();
         }
 
@@ -39,6 +45,8 @@ namespace OAuth.Server
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseErrorMiddleware();
 
             app.UseEndpoints(endpoints =>
             {

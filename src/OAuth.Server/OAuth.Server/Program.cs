@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using OAuth.Server.Data;
 
 namespace OAuth.Server
 {
@@ -13,14 +10,23 @@ namespace OAuth.Server
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            var host = CreateHostBuilder(args).Build();
+
+            var scope = host.Services.CreateScope();
+
+            using (var context = scope.ServiceProvider.GetRequiredService<DataContext>())
+            {
+                context.Database.Migrate();
+            }
+
+            host.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
+               Host.CreateDefaultBuilder(args)
+                   .ConfigureWebHostDefaults(webBuilder =>
+                   {
+                       webBuilder.UseStartup<Startup>();
+                   });
     }
 }

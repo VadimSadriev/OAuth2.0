@@ -1,0 +1,92 @@
+﻿<div class="row">
+    <div class="offset-lg-3 col-lg-6">
+        <!-- card -->
+        <div class="card">
+            <!-- card header -->
+            <div class="card-header text-center">
+                <h4> Register an account</h4>
+            </div>
+            <!-- card body -->
+            <div class="card-body">
+                <form>
+                    <!-- email address -->
+                    <div class="form-group">
+                        <label for="email-input">Email</label>
+                        <input type="email" class="form-control" id="email-input" placeholder="Enter email">
+                    </div>
+                    <!-- user name -->
+                    <div class="form-group">
+                        <label for="username-input">User name</label>
+                        <input type="text" class="form-control" id="username-input" placeholder="Enter user name">
+                    </div>
+                    <!-- password -->
+                    <div class="form-group">
+                        <label for="password-input">Password</label>
+                        <input type="password" class="form-control" id="password-input" placeholder="Password">
+                    </div>
+                    <!-- password confirmation -->
+                    <div class="form-group">
+                        <label for="password-confirm-input">Confirm password</label>
+                        <input type="password" class="form-control" id="password-confirm-input" placeholder="Confirm password">
+                    </div>
+                    <button class="btn btn-outline-primary" onclick="register(event)">Register</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function register(e) {
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        const email = document.getElementById('email-input').value;
+        const username = document.getElementById('username-input').value;
+        const password = document.getElementById('password-input').value;
+        const passwordConfirmation = document.getElementById('password-confirm-input').value;
+
+        const errors = [];
+
+        if (!email)
+            errors.push('please provide an email');
+
+        if (!username)
+            errors.push('please provide username');
+
+        if (!password)
+            errors.push('please provide password');
+
+        if (password !== passwordConfirmation)
+            errors.push('password and password confirmation are different!');
+
+        if (errors.length > 0) {
+            alert(errors.reduce((curr, next) => `${curr}\r\n${next}`));
+            return;
+        }
+
+        var request = {
+            email: email,
+            username: username,
+            password: password,
+            passwordConfirmation: passwordConfirmation
+        }
+
+        $.ajax({
+            url: "/auth/register",
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(request),
+            success: function (response) {
+
+            },
+            error: function (response) {
+                console.log(response);
+                alert(JSON.parse(response));
+            }
+        })
+    }
+
+</script>

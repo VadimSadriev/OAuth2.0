@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using OAuth.Common.Configuration;
 using OAuth.Common.Database;
+using OAuth.Server.Configuration;
 using OAuth.Server.Data;
 using OAuth.Server.Extensions;
 using OAuth.Server.Middlewares;
@@ -22,9 +24,14 @@ namespace OAuth.Server
 
         public void ConfigureServices(IServiceCollection services)
         {
+            var authSection = Configuration.GetSection("Auth").CheckExistence();
+            services.Configure<AuthConfiguration>(authSection);
+
             services.AddDb<DataContext>(Configuration.GetSection("Database"));
             services.Addidentity();
             services.AddApplication();
+            services.AddDistributedMemoryCache();
+            services.AddAuthentication(Configuration.GetSection("Auth:Jwt"));
             services.AddControllersWithViews()
                 .AddJsonOptions(opts => opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()))
                 .AddRazorRuntimeCompilation();
@@ -43,6 +50,8 @@ namespace OAuth.Server
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
             app.UseAuthorization();
 

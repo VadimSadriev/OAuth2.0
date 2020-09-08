@@ -1,12 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using OAuth.Server.Data.Entities;
-using System;
 
 namespace OAuth.Server.Data
 {
-    public class DataContext : IdentityDbContext<Account, IdentityRole<Guid>, Guid>
+    public class DataContext : IdentityDbContext<Account, Role, string>
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {

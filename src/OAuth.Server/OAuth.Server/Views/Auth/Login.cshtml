@@ -1,0 +1,78 @@
+﻿<div class="row">
+    <div class="offset-lg-3 col-lg-6">
+        <!-- card -->
+        <div class="card">
+            <!-- card header -->
+            <div class="card-header text-center">
+                <h4>Login</h4>
+            </div>
+            <!-- card body -->
+            <div class="card-body">
+                <form onsubmit="return false">
+                    <!-- user name -->
+                    <div class="form-group">
+                        <label for="username-input">User name</label>
+                        <input type="text" class="form-control" id="username-input" placeholder="Enter user name">
+                    </div>
+                    <!-- password -->
+                    <div class="form-group">
+                        <label for="password-input">Password</label>
+                        <input type="password" class="form-control" id="password-input" placeholder="Password">
+                    </div>
+                    <button class="btn btn-outline-primary" onclick="login(event)">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function login(e) {
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        const username = document.getElementById('username-input').value;
+        const password = document.getElementById('password-input').value;
+
+        const errors = [];
+
+        if (!username)
+            errors.push('please provide username');
+
+        if (!password)
+            errors.push('please provide password');
+
+        if (errors.length > 0) {
+            alert(errors.reduce((curr, next) => `${curr}\r\n${next}`));
+            return;
+        }
+
+        var requestBody = {
+            username: username,
+            password: password
+        }
+
+        const query = new URLSearchParams(location.search);
+
+        var redirectUri = query.get('redirect_uri')
+        var state = query.get('state')
+        var client_id = query.get('client_id')
+
+        $.ajax({
+            url: `/auth/login?redirect_uri=${redirectUri}&state=${state}&client_id=${client_id}`,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(requestBody),
+            success: function (response) {
+                alert('Account created succesfully!');
+            },
+            error: function (response) {
+                console.log(response);
+                alert(JSON.parse(response));
+            }
+        })
+    }
+
+</script>

@@ -12,6 +12,7 @@ namespace OAuth.Server.Data.EntitityConfigurations
             builder.HasKey(x => x.Id);
 
             builder.Property(x => x.Id)
+                .ValueGeneratedOnAdd()
                 .HasColumnName("id");
 
             builder.Property(x => x.CreateDate)
